@@ -421,6 +421,132 @@ TEST_CASE("PrimeStage tree view left moves to parent when leaf selected") {
   CHECK(selectedRow == 0);
 }
 
+TEST_CASE("PrimeStage tree view right moves to last child") {
+  PrimeFrame::Frame frame;
+  PrimeStage::UiNode root = createRoot(frame, 240.0f, 160.0f);
+
+  PrimeStage::TreeViewSpec spec;
+  spec.size.preferredWidth = 200.0f;
+  spec.size.preferredHeight = 120.0f;
+  spec.rowStartY = 0.0f;
+  spec.rowHeight = 20.0f;
+  spec.rowGap = 0.0f;
+  spec.rowStartX = 8.0f;
+  spec.rowWidthInset = 0.0f;
+  spec.rowStyle = 341u;
+  spec.rowAltStyle = 342u;
+  spec.selectionStyle = 343u;
+  spec.selectionAccentStyle = 344u;
+  spec.textStyle = 441u;
+  spec.selectedTextStyle = 442u;
+  spec.nodes = {
+      PrimeStage::TreeNode{"Parent",
+                           {PrimeStage::TreeNode{"Child A"},
+                            PrimeStage::TreeNode{"Child B"},
+                            PrimeStage::TreeNode{"Child C"}},
+                           true,
+                           false}
+  };
+
+  int selectedRow = -1;
+  spec.callbacks.onSelectionChanged = [&](PrimeStage::TreeViewRowInfo const& info) {
+    selectedRow = info.rowIndex;
+  };
+
+  PrimeStage::UiNode tree = root.createTreeView(spec);
+  PrimeFrame::LayoutOutput layout = layoutFrame(frame, 240.0f, 160.0f);
+  PrimeFrame::LayoutOut const* out = layout.get(tree.nodeId());
+  REQUIRE(out != nullptr);
+
+  PrimeFrame::EventRouter router;
+  PrimeFrame::FocusManager focus;
+
+  PrimeFrame::Event down = makePointerEvent(PrimeFrame::EventType::PointerDown, 1,
+                                            out->absX + spec.rowStartX + 16.0f,
+                                            out->absY + spec.rowStartY + spec.rowHeight * 0.5f);
+  router.dispatch(down, frame, layout, &focus);
+  CHECK(selectedRow == 0);
+
+  PrimeFrame::Event keyRight;
+  keyRight.type = PrimeFrame::EventType::KeyDown;
+  keyRight.key = 0x4F;
+  router.dispatch(keyRight, frame, layout, &focus);
+  CHECK(selectedRow == 3);
+}
+
+TEST_CASE("PrimeStage tree view page and edge keys") {
+  PrimeFrame::Frame frame;
+  PrimeStage::UiNode root = createRoot(frame, 240.0f, 160.0f);
+
+  PrimeStage::TreeViewSpec spec;
+  spec.size.preferredWidth = 200.0f;
+  spec.size.preferredHeight = 30.0f;
+  spec.rowStartY = 0.0f;
+  spec.rowHeight = 10.0f;
+  spec.rowGap = 0.0f;
+  spec.rowStartX = 8.0f;
+  spec.rowWidthInset = 0.0f;
+  spec.rowStyle = 351u;
+  spec.rowAltStyle = 352u;
+  spec.selectionStyle = 353u;
+  spec.selectionAccentStyle = 354u;
+  spec.textStyle = 451u;
+  spec.selectedTextStyle = 452u;
+  spec.nodes = {
+      PrimeStage::TreeNode{"Row 1"},
+      PrimeStage::TreeNode{"Row 2"},
+      PrimeStage::TreeNode{"Row 3"},
+      PrimeStage::TreeNode{"Row 4"},
+      PrimeStage::TreeNode{"Row 5"},
+      PrimeStage::TreeNode{"Row 6"},
+      PrimeStage::TreeNode{"Row 7"},
+      PrimeStage::TreeNode{"Row 8"}
+  };
+
+  int selectedRow = -1;
+  spec.callbacks.onSelectionChanged = [&](PrimeStage::TreeViewRowInfo const& info) {
+    selectedRow = info.rowIndex;
+  };
+
+  PrimeStage::UiNode tree = root.createTreeView(spec);
+  PrimeFrame::LayoutOutput layout = layoutFrame(frame, 240.0f, 160.0f);
+  PrimeFrame::LayoutOut const* out = layout.get(tree.nodeId());
+  REQUIRE(out != nullptr);
+
+  PrimeFrame::EventRouter router;
+  PrimeFrame::FocusManager focus;
+
+  PrimeFrame::Event down = makePointerEvent(PrimeFrame::EventType::PointerDown, 1,
+                                            out->absX + spec.rowStartX + 16.0f,
+                                            out->absY + spec.rowStartY + spec.rowHeight * 1.5f);
+  router.dispatch(down, frame, layout, &focus);
+  CHECK(selectedRow == 1);
+
+  PrimeFrame::Event keyPageDown;
+  keyPageDown.type = PrimeFrame::EventType::KeyDown;
+  keyPageDown.key = 0x4E;
+  router.dispatch(keyPageDown, frame, layout, &focus);
+  CHECK(selectedRow == 4);
+
+  PrimeFrame::Event keyPageUp;
+  keyPageUp.type = PrimeFrame::EventType::KeyDown;
+  keyPageUp.key = 0x4B;
+  router.dispatch(keyPageUp, frame, layout, &focus);
+  CHECK(selectedRow == 1);
+
+  PrimeFrame::Event keyHome;
+  keyHome.type = PrimeFrame::EventType::KeyDown;
+  keyHome.key = 0x4A;
+  router.dispatch(keyHome, frame, layout, &focus);
+  CHECK(selectedRow == 0);
+
+  PrimeFrame::Event keyEnd;
+  keyEnd.type = PrimeFrame::EventType::KeyDown;
+  keyEnd.key = 0x4D;
+  router.dispatch(keyEnd, frame, layout, &focus);
+  CHECK(selectedRow == 7);
+}
+
 TEST_CASE("PrimeStage tree view scroll updates callback") {
   PrimeFrame::Frame frame;
   PrimeStage::UiNode root = createRoot(frame, 240.0f, 140.0f);
