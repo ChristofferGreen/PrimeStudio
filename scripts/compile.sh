@@ -72,35 +72,10 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
   cxx_compiler="clang++"
 fi
 
-primestage_repo=""
-primeframe_repo=""
-primemanifest_repo=""
-primestage_source_dir=""
-primeframe_source_dir=""
-primemanifest_source_dir=""
-if [[ -d "$root_dir/../PrimeStage/.git" ]]; then
-  primestage_repo="$root_dir/../PrimeStage"
-  primestage_source_dir="$root_dir/../PrimeStage"
-fi
-if [[ -d "$root_dir/../PrimeFrame/.git" ]]; then
-  primeframe_repo="$root_dir/../PrimeFrame"
-  primeframe_source_dir="$root_dir/../PrimeFrame"
-fi
-if [[ -d "$root_dir/../PrimeManifest/.git" ]]; then
-  primemanifest_repo="$root_dir/../PrimeManifest"
-  primemanifest_source_dir="$root_dir/../PrimeManifest"
-fi
-
 cmake -S "$root_dir" -B "$root_dir/$build_dir" \
   -DCMAKE_BUILD_TYPE="$build_type" \
   -DPRIMESTUDIO_BUILD_EXAMPLES=ON \
   -DPRIMESTUDIO_BUILD_TESTS=OFF \
-  ${primestage_repo:+-DPRIMESTUDIO_PRIMESTAGE_GIT_REPOSITORY="$primestage_repo"} \
-  ${primeframe_repo:+-DPRIMEFRAME_GIT_REPOSITORY="$primeframe_repo"} \
-  ${primemanifest_repo:+-DPRIMESTUDIO_PRIMEMANIFEST_GIT_REPOSITORY="$primemanifest_repo"} \
-  ${primestage_source_dir:+-DFETCHCONTENT_SOURCE_DIR_PRIMESTAGE="$primestage_source_dir"} \
-  ${primeframe_source_dir:+-DFETCHCONTENT_SOURCE_DIR_PRIMEFRAME="$primeframe_source_dir"} \
-  ${primemanifest_source_dir:+-DFETCHCONTENT_SOURCE_DIR_PRIMEMANIFEST="$primemanifest_source_dir"} \
   ${cxx_compiler:+-DCMAKE_CXX_COMPILER="$cxx_compiler"}
 
 if [[ -n "$example_target" ]]; then
