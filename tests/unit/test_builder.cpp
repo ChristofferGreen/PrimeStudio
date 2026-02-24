@@ -1691,6 +1691,31 @@ TEST_CASE("PrimeStage card grid columns respect gap spacing") {
   CHECK(card1->absX == doctest::Approx(spec.cardWidth + spec.gapX));
   CHECK(card2->absX == doctest::Approx(0.0f));
 }
+
+TEST_CASE("PrimeStage card grid keeps three columns when width matches math") {
+  PrimeFrame::Frame frame;
+  Studio::applyStudioTheme(frame);
+  PrimeStage::UiNode root = createRoot(frame, 300.0f, 200.0f);
+
+  Studio::CardGridSpec spec;
+  spec.gapX = 10.0f;
+  spec.gapY = 6.0f;
+  spec.cardHeight = 40.0f;
+  spec.size.preferredWidth = 200.0f;
+  spec.size.preferredHeight = 100.0f;
+  spec.cardWidth = (spec.size.preferredWidth.value() - spec.gapX * 2.0f) / 3.0f;
+  spec.cards = {Studio::CardSpec{"One", "A"},
+                Studio::CardSpec{"Two", "B"},
+                Studio::CardSpec{"Three", "C"}};
+  PrimeStage::UiNode grid = Studio::createCardGrid(root, spec);
+
+  PrimeFrame::Node const* gridNode = frame.getNode(grid.nodeId());
+  REQUIRE(gridNode != nullptr);
+  REQUIRE(gridNode->children.size() == 1);
+  PrimeFrame::Node const* row0 = frame.getNode(gridNode->children[0]);
+  REQUIRE(row0 != nullptr);
+  CHECK(row0->children.size() == 3);
+}
 TEST_CASE("PrimeStage card grid text width clamps when padding exceeds width") {
   PrimeFrame::Frame frame;
   Studio::applyStudioTheme(frame);

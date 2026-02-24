@@ -1200,8 +1200,10 @@ UiNode createCardGrid(UiNode& parent, CardGridSpec const& spec) {
   size_t columns = 1;
   float gridWidth = bounds.width > 0.0f ? bounds.width : gridSize.preferredWidth.value_or(0.0f);
   if (spec.cardWidth + spec.gapX > 0.0f && gridWidth > 0.0f) {
-    columns = std::max<size_t>(1, static_cast<size_t>((gridWidth + spec.gapX) /
-                                                      (spec.cardWidth + spec.gapX)));
+    float stride = spec.cardWidth + spec.gapX;
+    float ratio = (gridWidth + spec.gapX) / stride;
+    constexpr float kColumnEpsilon = 1e-3f;
+    columns = std::max<size_t>(1, static_cast<size_t>(std::floor(ratio + kColumnEpsilon)));
   }
 
   float titleLine = resolve_line_height(frame(), textToken(spec.titleRole));
