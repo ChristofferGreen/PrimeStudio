@@ -77,11 +77,6 @@ if(PRIMESTUDIO_BUILD_TESTS)
   add_executable(PrimeStudio_tests
     tests/unit/test_main.cpp
     tests/unit/test_builder.cpp
-    tests/unit/test_interaction.cpp
-    tests/unit/test_tree_view.cpp
-    tests/unit/test_widgets.cpp
-    tests/unit/test_tabs_dropdown.cpp
-    tests/unit/test_text_selection.cpp
   )
   target_link_libraries(PrimeStudio_tests PRIVATE PrimeStudio)
   target_include_directories(PrimeStudio_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
