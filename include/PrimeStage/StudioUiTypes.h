@@ -240,6 +240,7 @@ struct TreeViewSpec {
   RectRole caretBackgroundRole = RectRole::PanelStrong;
   RectRole caretLineRole = RectRole::PanelAlt;
   RectRole connectorRole = RectRole::ScrollTrack;
+  RectRole focusRole = RectRole::Accent;
   TextRole textRole = TextRole::SmallMuted;
   TextRole selectedTextRole = TextRole::SmallBright;
 };

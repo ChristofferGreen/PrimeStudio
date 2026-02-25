@@ -666,6 +666,10 @@ UiNode createTreeView(UiNode& parent, TreeViewSpec const& spec) {
   treeSpec.caretBackgroundStyle = rectToken(spec.caretBackgroundRole);
   treeSpec.caretLineStyle = rectToken(spec.caretLineRole);
   treeSpec.connectorStyle = rectToken(spec.connectorRole);
+  treeSpec.focusStyle = rectToken(spec.focusRole);
+  if (!treeSpec.focusStyleOverride.opacity.has_value()) {
+    treeSpec.focusStyleOverride.opacity = 0.18f;
+  }
   treeSpec.textStyle = textToken(spec.textRole);
   treeSpec.selectedTextStyle = textToken(spec.selectedTextRole);
 
@@ -1308,6 +1312,8 @@ UiNode createButton(UiNode& parent,
     spec.pressedOpacity = 1.0f;
     spec.textStyle = textToken(TextRole::BodyBright);
   }
+  spec.focusStyle = rectToken(RectRole::Accent);
+  spec.focusStyleOverride.opacity = 0.25f;
   spec.callbacks = callbacks;
   return parent.createButton(spec);
 }
@@ -1327,6 +1333,8 @@ UiNode createTextField(UiNode& parent, std::string_view placeholder, SizeSpec co
     spec.size.minWidth = StudioDefaults::FieldWidthL;
   }
   spec.backgroundStyle = rectToken(RectRole::Panel);
+  spec.focusStyle = rectToken(RectRole::Accent);
+  spec.focusStyleOverride.opacity = 0.22f;
   spec.textStyle = textToken(TextRole::BodyBright);
   spec.placeholderStyle = textToken(TextRole::BodyMuted);
   return parent.createTextField(spec);
